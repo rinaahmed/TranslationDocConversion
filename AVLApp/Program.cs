@@ -11,6 +11,8 @@ namespace AVLApp
 {
     public class Program
     {
+        // Changing endings like "_de.txt" towards "_de.ALIGN" 
+        // This makes sure Translator Hub does not break sentences on its own but respects our alignment
         private static string[,] FileMapping = new string[,]
         {
             { ".DEU", "_de.ALIGN" },
