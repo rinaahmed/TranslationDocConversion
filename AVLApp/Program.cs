@@ -13,8 +13,8 @@ namespace AVLApp
     {
         private static string[,] FileMapping = new string[,]
         {
-            { ".DEU", "_de.txt" },
-            { ".ENU", "_en.txt" },
+            { ".DEU", "_de.ALIGN" },
+            { ".ENU", "_en.ALIGN" },
         };
 
         static void Main(string[] args)
