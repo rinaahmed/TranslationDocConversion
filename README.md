@@ -10,10 +10,10 @@ The folder structure within the _SourceFolder_ will be recreated in the _Destina
 
 ## Usage:
 
-Compile the program in Visual Studio and run the Program.exe file from the bin directory.
+Compile the program in Visual Studio and run the AVLApp.exe file from the bin directory.
 
 From command line, run 
-`Program <SourceFolder> <DestinationFolder>`
+`AVLApp <SourceFolder> <DestinationFolder>`
 
 If you run directly from Visual Studio, please make sure you update the two argument parameters for the folder in the Project Settings.
 
