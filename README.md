@@ -1,6 +1,6 @@
 # Document Conversion of Translation Documents to Text Files
 
-This project converts specific translation documents with extensions, such as .DEU .ENU and converts them to [_de | _en].ALIGN documents. 
+This project takes specific translation documents with extensions, such as .DEU .ENU, and converts them to [_de | _en].ALIGN documents. 
 
 The program takes two arguments:
 - _SourceFolder_: a folder containing .DEU and .ENU files
@@ -9,12 +9,13 @@ The program takes two arguments:
 The folder structure within the _SourceFolder_ will be recreated in the _DestinationFolder_.
 
 ## Usage:
-    Compile the program in Visual Studio and run the Program.exe file from the bin directory.
 
-    From command line, run 
-    `Program <SourceFolder> <DestinationFolder>`
+Compile the program in Visual Studio and run the Program.exe file from the bin directory.
 
-    If you run directly from Visual Studio, please make sure you update the two argument parameters for the folder in the Project Settings.
+From command line, run 
+`Program <SourceFolder> <DestinationFolder>`
+
+If you run directly from Visual Studio, please make sure you update the two argument parameters for the folder in the Project Settings.
 
 
 The programm has been written by David Zeller. 
