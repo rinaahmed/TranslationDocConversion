@@ -11,25 +11,85 @@ namespace AVLApp
 {
     public class Program
     {
-        // Changing endings like "_de.txt" towards "_de.ALIGN" 
-        // This makes sure Translator Hub does not break sentences on its own but respects our alignment
-        private static string[,] FileMapping = new string[,]
-        {
-            { ".DEU", "_de.ALIGN" },
-            { ".ENU", "_en.ALIGN" },
-        };
+        private const string DefaultTargetFileExtension = "ALIGN";
+
+        // Contains Mapping Table that is read from configuration
+        private static Dictionary<string, string> FileMapping = new Dictionary<string, string>();
 
         static void Main(string[] args)
         {
+            if (!ValidateArguments(args))
+            {
+                return;
+            }
+
             string sourceDirectory = args[0];
             string targetDirectory = args[1];
+            string targetFileExtension = args.Length > 2 ? args[2] : DefaultTargetFileExtension;
+            ReadFileMappingFromConfig();
             
-            TranslateDirectory(sourceDirectory, targetDirectory);
+            TranslateDirectory(sourceDirectory, targetDirectory, targetFileExtension);
             System.Console.WriteLine("Translation finished");
             System.Console.ReadLine();
-        }   
+        }
 
-        private static void TranslateDirectory(string sourceDirectory, string targetDirectory)
+        /// <summary>
+        /// Reads FileMap Configuration Data into Dictionary FileMapping
+        /// </summary>
+        private static void ReadFileMappingFromConfig()
+        {
+            int i = 1;
+            string fileMap = System.Configuration.ConfigurationManager.AppSettings["FileMap" + i.ToString()];
+            while(!String.IsNullOrEmpty(fileMap))
+            {
+                var fileMapParts = fileMap.Split(';');
+                FileMapping.Add(fileMapParts[0], fileMapParts[1]);
+                i++;
+                fileMap = System.Configuration.ConfigurationManager.AppSettings["FileMap" + i.ToString()];
+            }            
+        }
+
+        /// <summary>
+        /// Validates Commandline Arguments
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns>false if not valid</returns>
+        private static bool ValidateArguments(string[] args)
+        {
+            bool isValid = true;
+
+            if(args.Length < 2)
+            {
+                System.Console.WriteLine("Es müssen zumindest 2 Parameter übergeben werden.");
+                isValid = false;
+            }
+
+            if(isValid && !Directory.Exists(args[0]))
+            {
+                System.Console.WriteLine(string.Format("Der erste Parameter {0} ist kein gültiger Vereichnisname", args[0]));
+                isValid = false;
+            }
+
+            if (isValid && !Directory.Exists(args[1]))
+            {
+                System.Console.WriteLine(string.Format("Der zweite Parameter {0} ist kein gültiger Vereichnisname", args[1]));
+                isValid = false;
+            }
+
+            if(!isValid)
+            {
+                System.Console.WriteLine("\n\rLeider wurden die Paramter nicht korrekt übergeben:\n\r" +
+                                         "Parameter1: [InputDirectory]  - verpflichtend\n\r" +
+                                         "Parameter2: [OutputDirectory] - verpflichtend\n\r" +
+                                         "Parameter3: [TargetExtension] - optional\n\r" +
+                                         "Beispiel: AVLApp.exe \"c:\\input\" \"c:\\output\" txt\n\r");
+
+            }
+
+            return isValid;
+        }
+
+        private static void TranslateDirectory(string sourceDirectory, string targetDirectory, string targetFileExtension)
         {
             DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
             if(!diTarget.Exists)
@@ -46,7 +106,7 @@ namespace AVLApp
                 {
                     //and convert it
                     System.Console.WriteLine(string.Format("File {0} wird umgewandelt", file.FullName));
-                    string targetFile = diTarget.FullName + "\\" + GetTargetFileName(file.Name, file.Extension);                    
+                    string targetFile = diTarget.FullName + "\\" + GetTargetFileName(file.Name, file.Extension, targetFileExtension);                    
                     FileTranslator.TranslationFileToText(file.FullName, targetFile);
                     System.Console.WriteLine(string.Format("File {0} geschrieben", targetFile));
                 }
@@ -55,7 +115,7 @@ namespace AVLApp
             //Walk through the subdirectories
             foreach(var directory in dirInfo.GetDirectories())
             {
-                TranslateDirectory(directory.FullName, diTarget.FullName + "\\" + directory.Name);
+                TranslateDirectory(directory.FullName, diTarget.FullName + "\\" + directory.Name, targetFileExtension);
             }
         }
 
@@ -67,15 +127,7 @@ namespace AVLApp
         /// <returns></returns>
         private static bool IsTranslationFile(string extension)
         {
-            for(int i = 0; i < FileMapping.GetLength(0); i++)
-            {
-                if(FileMapping[i, 0].ToLower() == extension.ToLower())
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return FileMapping.Keys.ToList().Exists(k => k.ToLower() == extension);            
         }
 
         /// <summary>
@@ -84,17 +136,15 @@ namespace AVLApp
         /// <param name="soureFileName"></param>
         /// <param name="sourceFileExtension"></param>
         /// <returns></returns>
-        private static string GetTargetFileName(string soureFileName, string sourceFileExtension)
+        private static string GetTargetFileName(string soureFileName, string sourceFileExtension, string targetFileExtension)
         {
             string targetFileName = soureFileName;
 
-            for (int i = 0; i < FileMapping.GetLength(0); i++)
+            string key = FileMapping.Keys.ToList().FirstOrDefault(k => k.ToLower() == sourceFileExtension.ToLower());
+            if(!string.IsNullOrEmpty(key))
             {
-                if (FileMapping[i, 0].ToLower() == sourceFileExtension.ToLower())
-                {
-                    return soureFileName.Replace(sourceFileExtension, "") + FileMapping[i, 1];
-                }                
-            }
+                return soureFileName.Replace(sourceFileExtension, "") + FileMapping[key] + "." + targetFileExtension;
+            }          
 
             throw new Exception("Could not translate Filename");
         }
