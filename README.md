@@ -5,6 +5,7 @@ This project takes specific translation documents with extensions, such as .DEU 
 The program takes two arguments:
 - _SourceFolder_: a folder containing .DEU and .ENU files
 - _DestinationFolder_: the folder containing the resulting text documents.
+- _TargetExtension_: the default extension of the generated files. (optional)
 
 The folder structure within the _SourceFolder_ will be recreated in the _DestinationFolder_.
 
