@@ -1,11 +1,11 @@
 # Document Conversion of Translation Documents to Text Files
 
-This project takes specific translation documents with extensions, such as .DEU .ENU, and converts them to [_de | _en].ALIGN documents. 
+This project takes specific translation documents with extensions, such as .DEU .ENU, and converts them to [_de | _en].[Extension] documents. 
 
 The program takes two arguments:
 - _SourceFolder_: a folder containing .DEU and .ENU files
 - _DestinationFolder_: the folder containing the resulting text documents.
-- _TargetExtension_: the default extension of the generated files, if missing _ALIGN is used. (optional)
+- _TargetExtension_: the default extension of the generated files, if missing ALIGN is used. (optional)
 
 The folder structure within the _SourceFolder_ will be recreated in the _DestinationFolder_.
 
@@ -18,6 +18,11 @@ From command line, run
 
 If you run directly from Visual Studio, please make sure you update the two argument parameters for the folder in the Project Settings.
 
+Filemappingconfiguration can be found in AVLApp.exe.config and can be extended with additional mappings:
+    <appSettings>
+      <add key="FileMap1" value=".DEU;_de"/>
+      <add key="FileMap2" value=".ENU;_en"/>
+    </appSettings>
 
 The programm has been written by David Zeller. 
 
